@@ -1,0 +1,64 @@
+{% extends "layouts/auth_base.html" %}
+{% block title %}Sign in · Patient Manager{% endblock %}
+
+{% block content %}
+<h1 class="auth-title">Welcome back</h1>
+<p class="auth-sub">Sign in to continue to your dashboard.</p>
+
+<form method="post" novalidate id="login-form">
+    {% csrf_token %}
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+    {% if error %}
+    <div class="alert-soft" role="alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <div class="field">
+        <label class="label" for="id_email">Email address</label>
+        <input class="input" type="email" id="id_email" name="email" value="{{ email|default:'' }}"
+               placeholder="you@clinic.com" autocomplete="email" autofocus required>
+    </div>
+
+    <div class="field">
+        <label class="label" for="id_password">Password</label>
+        <div class="pw">
+            <input class="input" type="password" id="id_password" name="password"
+                   placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="pw-toggle" data-toggle-pw="id_password" aria-label="Show or hide password">Show</button>
+        </div>
+    </div>
+
+    <button type="submit" class="btn-brand" id="login-btn">
+        <span class="label-text">Sign in</span>
+    </button>
+
+    <p class="auth-switch">New here? <a href="{% url 'register' %}">Create an account</a></p>
+   
+</form>
+
+<script>
+(function(){
+    
+    document.querySelectorAll('[data-toggle-pw]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            var el = document.getElementById(btn.getAttribute('data-toggle-pw'));
+            if(!el) return;
+            var show = el.type === 'password';
+            el.type = show ? 'text' : 'password';
+            btn.textContent = show ? 'Hide' : 'Show';
+        });
+    });
+
+    document.getElementById('login-form').addEventListener('submit', function(){
+        var b = document.getElementById('login-btn');
+        if(this.checkValidity()){
+            b.disabled = true;
+            b.innerHTML = '<span class="spinner"></span><span>Signing in…</span>';
+        }
+    });
+})();
+</script>
+{% endblock %}

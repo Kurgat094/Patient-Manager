@@ -1,0 +1,1001 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}Patient Profile · Patient Manager{% endblock %}
+
+{% block content %}
+
+<!-- Font Awesome (your layout doesn't load it, and this page uses fas icons) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+    .patient-page {
+        color: #263449;
+        padding-bottom: 35px;
+    }
+
+    .patient-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+    }
+
+    .patient-heading h3 {
+        font-size: 23px;
+        font-weight: 700;
+        margin-bottom: 5px;
+        color: #172b4d;
+    }
+
+    .patient-heading p {
+        color: #8391a5;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .btn-back {
+        border: 1px solid #e3e9f0;
+        background: #fff;
+        color: #52647a;
+        padding: 9px 15px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .btn-back:hover {
+        background: #f5f8fc;
+        color: #172b4d;
+    }
+
+    .profile-card {
+        background: #fff;
+        border: 1px solid #e9eef4;
+        border-radius: 13px;
+        padding: 25px;
+        box-shadow: 0 3px 12px rgba(35, 55, 80, .035);
+        margin-bottom: 22px;
+    }
+
+    .profile-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .profile-identity {
+        display: flex;
+        align-items: center;
+        gap: 17px;
+    }
+
+    .patient-avatar {
+        width: 68px;
+        height: 68px;
+        border-radius: 15px;
+        background: #e9f2ff;
+        color: #2864b4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .profile-identity h4 {
+        font-size: 20px;
+        color: #172b4d;
+        font-weight: 700;
+        margin: 0 0 7px;
+    }
+
+    .patient-code {
+        color: #8391a5;
+        font-size: 13px;
+    }
+
+    .patient-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #16845b;
+        background: #e9f8f1;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-vitals {
+        background: #2864b4;
+        color: white;
+    }
+
+    .btn-vitals:hover {
+        background: #1d4e91;
+        color: white;
+    }
+
+    .btn-edit {
+        background: #f0f4f9;
+        color: #52647a;
+    }
+
+    .btn-edit:hover {
+        background: #e4ebf4;
+    }
+
+    .section-heading {
+        font-size: 15px;
+        font-weight: 700;
+        color: #263b58;
+        margin-bottom: 18px;
+    }
+
+    .section-description {
+        font-size: 12px;
+        color: #94a0b1;
+        margin-top: -12px;
+        margin-bottom: 18px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px 25px;
+    }
+
+    .info-item label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        color: #94a0b1;
+        margin-bottom: 7px;
+        text-transform: uppercase;
+        letter-spacing: .4px;
+    }
+
+    .info-item div {
+        font-size: 14px;
+        font-weight: 600;
+        color: #34465f;
+        overflow-wrap: anywhere;
+    }
+
+    .content-card {
+        background: white;
+        border: 1px solid #e9eef4;
+        border-radius: 13px;
+        padding: 23px;
+        box-shadow: 0 3px 12px rgba(35, 55, 80, .035);
+        height: 100%;
+    }
+
+    .summary-box {
+        padding: 17px;
+        background: #f7f9fc;
+        border: 1px solid #edf1f6;
+        border-radius: 10px;
+    }
+
+    .summary-box span {
+        display: block;
+        color: #8997aa;
+        font-size: 11px;
+        margin-bottom: 8px;
+    }
+
+    .summary-box strong {
+        display: block;
+        font-size: 21px;
+        color: #263b58;
+        font-weight: 700;
+    }
+
+    .patient-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 550px;
+    }
+
+    .patient-table th {
+        color: #8492a5;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        font-weight: 700;
+        padding: 13px 12px;
+        background: #f8fafc;
+        border-bottom: 1px solid #edf1f6;
+        text-align: left;
+    }
+
+    .patient-table td {
+        padding: 15px 12px;
+        font-size: 12px;
+        color: #52647a;
+        border-bottom: 1px solid #f0f3f7;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 35px 15px;
+        color: #94a0b1;
+        font-size: 13px;
+    }
+
+    .empty-state i {
+        display: block;
+        font-size: 27px;
+        margin-bottom: 12px;
+        color: #bdc9d7;
+    }
+
+    .modal-content {
+        border: 0;
+        border-radius: 13px;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        background: #f7f9fc;
+        border-bottom: 1px solid #edf1f6;
+        padding: 17px 21px;
+    }
+
+    .modal-title {
+        font-size: 15px;
+        font-weight: 700;
+        color: #263b58;
+    }
+
+    .modal-body {
+        padding: 22px;
+    }
+
+    .modal-body p {
+        color: #74849a;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    /* ---- Flow modals (vitals + assessments) ---- */
+    .flow-modal .form-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #52647a;
+        margin-bottom: 6px;
+    }
+
+    .flow-modal .form-check-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #34465f;
+    }
+
+    .flow-modal .patient-chip {
+        font-size: 12px;
+        color: #8391a5;
+        margin-bottom: 16px;
+    }
+
+    .flow-modal .bmi-hint {
+        font-size: 12px;
+        color: #8391a5;
+        margin-top: 4px;
+    }
+
+    .flow-modal .bmi-hint.over {
+        color: #b45309;
+    }
+
+    .flow-modal .bmi-hint.ok {
+        color: #16845b;
+    }
+
+    .flow-modal .radio-error {
+        display: none;
+        color: #dc3545;
+        font-size: .875em;
+        margin-top: .25rem;
+    }
+
+    .flow-modal .radio-error.show {
+        display: block;
+    }
+
+    @media(max-width: 768px) {
+        .info-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .profile-card {
+            padding: 18px;
+        }
+    }
+
+    @media(max-width: 480px) {
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .profile-identity {
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container-fluid patient-page">
+
+    <!-- Page heading -->
+    <div class="patient-heading">
+        <div>
+            <h3>Patient Profile</h3>
+            <p>Patient Management / Patient Details</p>
+        </div>
+
+        <a href="{% url 'getpatients' %}" class="btn-back">
+            <i class="fas fa-arrow-left me-2"></i>
+            Back to Patients
+        </a>
+    </div>
+
+    <!-- Profile header -->
+    <div class="profile-card">
+
+        <div class="profile-top">
+
+            <div class="profile-identity">
+
+                <div class="patient-avatar">
+                    {{ patient.firstname|first }}{{ patient.lastname|first }}
+                </div>
+
+                <div>
+                    <h4>{{ patient.firstname }} {{ patient.lastname }}</h4>
+
+                    <div class="patient-code">
+                        <!-- Patient ID: #{{ patient.id }} -->
+                        <span class="mx-2">|</span>
+                        {{ patient.unique }}
+                    </div>
+
+                    
+                </div>
+
+            </div>
+
+            <div class="profile-actions">
+
+                <button type="button"
+                        class="btn-action btn-vitals"
+                        data-bs-toggle="modal"
+                        data-bs-target="#vitalsInfoModal">
+                    <i class="fas fa-heartbeat me-1"></i>
+                    Record Vitals
+                </button>
+
+                <button type="button"
+                        class="btn-action btn-edit"
+                        data-bs-toggle="modal"
+                        data-bs-target="#patientInfoModal">
+                    <i class="fas fa-user-edit me-1"></i>
+                    Patient Information
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    
+    <div class="content-card mb-4">
+
+        <h5 class="section-heading">
+            <i class="fas fa-user-circle me-2 text-primary"></i>
+            Personal Information
+        </h5>
+
+        <div class="info-grid">
+
+            <div class="info-item">
+                <label>First Name</label>
+                <div>{{ patient.firstname }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Last Name</label>
+                <div>{{ patient.lastname }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Patient Number</label>
+                <div>{{ patient.unique }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Date of Birth</label>
+                <div>{{ patient.dob|default:"Not provided" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Gender</label>
+                <div>{{ patient.gender|default:"Not provided" }}</div>
+            </div>
+
+            <div class="info-item">
+                <label>Registration Date</label>
+                <div>{{ patient.reg_date|default:"Not provided" }}</div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="patientInfoModal" tabindex="-1" aria-hidden="true">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">Patient Information</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+
+                <p>
+                    This patient's demographic details are retrieved
+                    directly from the patient registration API.
+                </p>
+
+                <div class="info-grid">
+
+                    <div class="info-item">
+                        <label>Patient ID</label>
+                        <div>{{ patient.id }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Unique Number</label>
+                        <div>{{ patient.unique }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>First Name</label>
+                        <div>{{ patient.firstname }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Last Name</label>
+                        <div>{{ patient.lastname }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Date of Birth</label>
+                        <div>{{ patient.dob }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <label>Gender</label>
+                        <div>{{ patient.gender }}</div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">
+                    Close
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+<div class="modal fade flow-modal" id="vitalsInfoModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Patient Vitals</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="vitalsForm" action="{% url 'add_vitals' patient.id %}" method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="patient_id" value="{{ patient.id }}">
+
+                <div class="modal-body">
+                    <div class="patient-chip">
+                        {{ patient.firstname }} {{ patient.lastname }} 
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="v_visit_date">Visit date *</label>
+                        <input type="date" class="form-control" id="v_visit_date" name="visit_date" required>
+                        <div class="invalid-feedback">Please choose a visit date.</div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="v_height">Height (CM) *</label>
+                            <input type="number" step="0.1" min="30" max="272" class="form-control" id="v_height" name="height" required>
+                            <div class="invalid-feedback">Enter height in cm.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="v_weight">Weight (KG) *</label>
+                            <input type="number" step="0.1" min="1" max="700" class="form-control" id="v_weight" name="weight" required>
+                            <div class="invalid-feedback">Enter weight in kg.</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="v_bmi">BMI (auto-calculated) *</label>
+                        <input type="text" class="form-control" id="v_bmi" name="bmi" readonly required>
+                        <div class="bmi-hint" id="v_bmi_hint">Enter height and weight.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save vitals</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 2a. General assessment modal (BMI <= 25) ============ -->
+<div class="modal fade flow-modal" id="generalAssessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">General Assessment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="generalForm"  action="{% url 'add_assessment' patient.id %}" class="assess-form" method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="patient_id" value="{{ patient.id }}">
+
+                <div class="modal-body">
+                    <div class="patient-chip">
+                        {{ patient.firstname }} {{ patient.lastname }} · BMI <span class="js-bmi"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="g_visit_date">Visit date *</label>
+                        <input type="date" class="form-control js-visit-date" id="g_visit_date" name="visit_date" required>
+                        <div class="invalid-feedback">Please choose a visit date.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">General health *</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="g_gh_good" name="general_health" value="Good" required>
+                            <label class="form-check-label" for="g_gh_good">Good</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="g_gh_poor" name="general_health" value="Poor" required>
+                            <label class="form-check-label" for="g_gh_poor">Poor</label>
+                        </div>
+                        <div class="radio-error">Please select one.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Are you currently using any drugs? *</label>
+                        <div class="form-check form-check-inline">
+                                                       <input class="form-check-input"
+       type="radio"
+       id="g_drugs_yes"
+       name="on_drugs"
+       value="Yes"
+       required>
+                            <label class="form-check-label" for="g_drugs_yes">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+
+
+<input class="form-check-input"
+       type="radio"
+       id="g_drugs_no"
+       name="on_drugs"
+       value="No"
+       required>
+                            <label class="form-check-label" for="g_drugs_no">No</label>
+                        </div>
+                        <div class="radio-error">Please select one.</div>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="g_comments">Comments *</label>
+                        <textarea class="form-control" id="g_comments" name="comments" rows="3" required></textarea>
+                        <div class="invalid-feedback">Please add a comment.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save assessment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade flow-modal" id="overweightAssessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Overweight Assessment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="overweightForm" action="{% url 'add_assessment' patient.id %}" class="assess-form" method="post" novalidate>
+                {% csrf_token %}
+                <input type="hidden" name="patient_id" value="{{ patient.id }}">
+
+                <div class="modal-body">
+                    <div class="patient-chip">
+                        {{ patient.firstname }} {{ patient.lastname }} · BMI <span class="js-bmi"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="o_visit_date">Visit date *</label>
+                        <input type="date" class="form-control js-visit-date" id="o_visit_date" name="visit_date" required>
+                        <div class="invalid-feedback">Please choose a visit date.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">General health *</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="o_gh_good" name="general_health" value="Good" required>
+                            <label class="form-check-label" for="o_gh_good">Good</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="o_gh_poor" name="general_health" value="Poor" required>
+                            <label class="form-check-label" for="o_gh_poor">Poor</label>
+                        </div>
+                        <div class="radio-error">Please select one.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label d-block">Have you ever been on a diet to lose weight? *</label>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="o_diet_yes" name="on_diet" value="Yes" required>
+                            <label class="form-check-label" for="o_diet_yes">Yes</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" id="o_diet_no" name="on_diet" value="No" required>
+                            <label class="form-check-label" for="o_diet_no">No</label>
+                        </div>
+                        <div class="radio-error">Please select one.</div>
+                    </div>
+
+                    <div>
+                        <label class="form-label" for="o_comments">Comments *</label>
+                        <textarea class="form-control" id="o_comments" name="comments" rows="3" required></textarea>
+                        <div class="invalid-feedback">Please add a comment.</div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save assessment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<script>
+window.addEventListener("load", function () {
+    if (!window.bootstrap) {
+        console.error("Bootstrap JS did not load");
+        return;
+    }
+
+    var PATIENTS_URL = "{% url 'getpatients' %}";
+
+    var vitalsModalEl = document.getElementById("vitalsInfoModal");
+    var generalModalEl = document.getElementById("generalAssessModal");
+    var overweightModalEl = document.getElementById("overweightAssessModal");
+
+    function todayISO() {
+        var d = new Date();
+        return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+    }
+
+    function validateForm(form) {
+        var ok = form.checkValidity();
+        form.classList.add("was-validated");
+        form.querySelectorAll(".radio-error").forEach(function (err) {
+            var firstRadio = err.parentElement.querySelector("input[type=radio]");
+            var answered = firstRadio && form.querySelector('input[name="' + firstRadio.name + '"]:checked');
+            err.classList.toggle("show", !answered);
+        });
+        return ok;
+    }
+    function resetForm(form) {
+        form.reset();
+        form.classList.remove("was-validated");
+        form.querySelectorAll(".radio-error").forEach(function (err) {
+            err.classList.remove("show");
+        });
+    }
+    function showError(modalEl, msg) {
+        var box = modalEl.querySelector(".js-form-error");
+        if (!box) return;
+        box.textContent = msg || "";
+        box.classList.toggle("d-none", !msg);
+    }
+    function setBusy(form, busy) {
+        var btn = form.querySelector('button[type="submit"]');
+        if (!btn) return;
+        if (busy) {
+            btn.dataset.label = btn.textContent;
+            btn.textContent = "Saving…";
+        } else if (btn.dataset.label) {
+            btn.textContent = btn.dataset.label;
+        }
+        btn.disabled = busy;
+    }
+
+    /* POST a form to its own action; resolves with the JSON, rejects with a message */
+    async function postForm(form) {
+        var resp = await fetch(form.action, {
+            method: "POST",
+            body: new FormData(form),
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            credentials: "same-origin"
+        });
+        var data = {};
+        try { data = await resp.json(); } catch (e) {}
+        if (data.redirect) {          // session expired
+            window.location.href = data.redirect;
+            return null;
+        }
+        if (!resp.ok || !data.success) {
+            throw new Error(data.message || "Something went wrong. Please try again.");
+        }
+        return data;
+    }
+
+    function swapModal(fromEl, toEl) {
+        fromEl.addEventListener("hidden.bs.modal", function () {
+            bootstrap.Modal.getOrCreateInstance(toEl).show();
+        }, { once: true });
+        bootstrap.Modal.getOrCreateInstance(fromEl).hide();
+    }
+
+    /* ---------- Vitals ---------- */
+    var vForm = document.getElementById("vitalsForm");
+    var vH = document.getElementById("v_height");
+    var vW = document.getElementById("v_weight");
+    var vBmi = document.getElementById("v_bmi");
+    var vHint = document.getElementById("v_bmi_hint");
+    var vDate = document.getElementById("v_visit_date");
+    var lastBmi = null;
+    var lastVisitDate = null;
+
+    function calcBmi() {
+        var h = parseFloat(vH.value), w = parseFloat(vW.value);
+        vHint.className = "bmi-hint";
+        if (h > 0 && w > 0) {
+            var m = h / 100;
+            var bmi = w / (m * m);
+            vBmi.value = bmi.toFixed(1);
+            if (bmi <= 25) {
+                vHint.textContent = "BMI ≤ 25 · General Assessment will follow.";
+                vHint.classList.add("ok");
+            } else {
+                vHint.textContent = "BMI > 25 · Overweight Assessment will follow.";
+                vHint.classList.add("over");
+            }
+        } else {
+            vBmi.value = "";
+            vHint.textContent = "Enter height and weight.";
+        }
+    }
+    vH.addEventListener("input", calcBmi);
+    vW.addEventListener("input", calcBmi);
+
+    vitalsModalEl.addEventListener("show.bs.modal", function () {
+        resetForm(vForm);
+        showError(vitalsModalEl, "");
+        vDate.max = todayISO();
+        vDate.value = todayISO();
+        calcBmi();
+    });
+
+    vForm.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        if (!validateForm(vForm)) return;
+
+        showError(vitalsModalEl, "");
+        setBusy(vForm, true);
+        try {
+            var data = await postForm(vForm);
+            if (!data) return;
+
+            lastBmi = data.bmi;
+            lastVisitDate = vDate.value;
+
+            // The server decides which assessment follows
+            swapModal(
+                vitalsModalEl,
+                data.assessment_type === "general" ? generalModalEl : overweightModalEl
+            );
+        } catch (err) {
+            showError(vitalsModalEl, err.message);
+        } finally {
+            setBusy(vForm, false);
+        }
+    });
+
+    /* ---------- Assessments ---------- */
+    [generalModalEl, overweightModalEl].forEach(function (el) {
+        el.addEventListener("show.bs.modal", function () {
+            resetForm(el.querySelector("form"));
+            showError(el, "");
+            el.querySelector(".js-bmi").textContent = lastBmi !== null ? Number(lastBmi).toFixed(1) : "";
+            var dateInput = el.querySelector(".js-visit-date");
+            dateInput.max = todayISO();
+            dateInput.value = lastVisitDate || todayISO();
+        });
+    });
+
+    document.querySelectorAll(".assess-form").forEach(function (form) {
+        form.addEventListener("submit", async function (e) {
+            e.preventDefault();
+            if (!validateForm(form)) return;
+
+            var modalEl = form.closest(".modal");
+            showError(modalEl, "");
+
+            /* Set each assessment form's action="..." to your assessment endpoint.
+               Until it's set, form.action is just this page's URL. */
+            if (!form.getAttribute("action")) {
+                showError(modalEl, "Assessment endpoint not connected yet.");
+                return;
+            }
+
+            setBusy(form, true);
+            try {
+                var data = await postForm(form);
+                if (!data) return;
+                modalEl.addEventListener("hidden.bs.modal", function () {
+                    window.location.href = PATIENTS_URL;
+                }, { once: true });
+                bootstrap.Modal.getOrCreateInstance(modalEl).hide();
+            } catch (err) {
+                showError(modalEl, err.message);
+            } finally {
+                setBusy(form, false);
+            }
+        });
+    });
+});
+</script>
+<script>
+
+/* ---------- Submit General and Overweight Assessments ---------- */
+
+document.querySelectorAll(".assess-form").forEach(function (form) {
+
+    form.addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        if (!validateForm(form)) {
+            return;
+        }
+
+        const submitButton = form.querySelector(
+            'button[type="submit"]'
+        );
+
+        const originalText = submitButton.textContent;
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Saving assessment...";
+
+        try {
+
+            const response = await fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: new FormData(form)
+            });
+
+            const result = await response.json();
+
+            if (response.status === 401 && result.redirect) {
+                window.location.href = result.redirect;
+                return;
+            }
+
+            if (!response.ok || !result.success) {
+                alert(
+                    result.message ||
+                    "Unable to save the assessment."
+                );
+                return;
+            }
+
+            alert(result.message);
+
+            // Close the assessment modal.
+            const modalEl = form.closest(".modal");
+
+            bootstrap.Modal
+                .getOrCreateInstance(modalEl)
+                .hide();
+
+            // Redirect only after a successful API response.
+            window.location.href = result.redirect;
+
+        } catch (error) {
+
+            console.error("Assessment submission error:", error);
+
+            alert(
+                "An error occurred while submitting the assessment."
+            );
+
+        } finally {
+
+            submitButton.disabled = false;
+            submitButton.textContent = originalText;
+
+        }
+
+    });
+
+});
+
+</script>
+
+{% endblock %}

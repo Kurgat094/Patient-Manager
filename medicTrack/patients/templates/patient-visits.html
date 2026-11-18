@@ -1,0 +1,75 @@
+{% extends "layouts/app.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4>Patient Visits</h4>
+            <p class="text-muted mb-0">
+                All patient visits recorded on {{ visit_date }}
+            </p>
+        </div>
+
+        <a href="{% url 'getpatients' %}" class="btn btn-outline-secondary">
+            Back to Patients
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Visit Records</h5>
+
+                <span class="badge bg-primary">
+                    {{ visits|length }} Visits
+                </span>
+            </div>
+
+            {% if visits %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Patient Name</th>
+                                <th>Age</th>
+                                <th>BMI</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for visit in visits %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ visit.name }}</td>
+                                    <td>{{ visit.age }}</td>
+                                    <td>{{ visit.bmi }}</td>
+                                    <td>
+                                        <span class="badge bg-info text-dark">
+                                            {{ visit.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-5">
+                    <h6>No visits found</h6>
+                    <p class="text-muted mb-0">
+                        There are no patient visits recorded for {{ visit_date }}.
+                    </p>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
