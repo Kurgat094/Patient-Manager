@@ -34,8 +34,7 @@ def api_request(endpoint, payload):
         return response.status_code, data
 
     except requests.exceptions.RequestException as exc:
-        print("API CONNECTION ERROR:", repr(exc))
-        print("API REQUEST URL:", url)
+        
 
         return None, {
             "message": f"API connection failed: {str(exc)}"

@@ -66,8 +66,7 @@ def register(request):
                 "email": email,
             })
 
-        print("REGISTRATION API STATUS:", status)
-        print("REGISTRATION API RESPONSE:", data)
+   
 
         return render(request, "auth/register.html", {
             "error": data.get(
@@ -407,7 +406,7 @@ def add_assessment(request, patient_id):
 
     comments = request.POST.get("comments", "").strip()
 
-    # The assessment date must match the saved vitals date.
+    
     visit_date = pending.get("visit_date")
 
     if not general_health or not comments:
@@ -482,7 +481,7 @@ def add_assessment(request, patient_id):
             )
         }, status=400)
 
-    # Clear the pending workflow after successful submission.
+    
     del request.session["pending_assessment"]
     request.session.modified = True
 

@@ -128,12 +128,7 @@ def register_patient(access_token, payload, acc=None):
             timeout=30
         )
 
-        print("\n========== PATIENT REGISTRATION ==========")
-        print("REQUEST URL:", response.url)
-        print("REQUEST PAYLOAD:", payload)
-        print("STATUS CODE:", response.status_code)
-        print("RAW RESPONSE:", response.text)
-        print("==========================================\n")
+
 
         try:
             data = response.json()
@@ -208,12 +203,7 @@ def add_visit(access_token, payload):
             timeout=30
         )
 
-        print("\n========== ADD VISIT API DEBUG ==========")
-        print("REQUEST URL:", url)
-        print("REQUEST PAYLOAD:", payload)
-        print("STATUS CODE:", response.status_code)
-        print("RAW RESPONSE:", response.text)
-        print("=========================================\n")
+     
 
         try:
             data = response.json()
@@ -255,12 +245,7 @@ def get_visits_by_date(access_token, visit_date):
             timeout=30
         )
 
-        print("\n========== VISITS LIST API DEBUG ==========")
-        print("REQUEST URL:", url)
-        print("REQUEST PAYLOAD:", payload)
-        print("STATUS CODE:", response.status_code)
-        print("RAW RESPONSE:", response.text)
-        print("===========================================\n")
+      
 
         try:
             data = response.json()
